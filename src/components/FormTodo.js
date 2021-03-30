@@ -7,8 +7,7 @@ const FormTodo = () => {
 
   useEffect(() => {
     axios.get('https://c8tdxqo12a.execute-api.ap-southeast-1.amazonaws.com/dev/users',{}, {headers:{"Access-Control-Allow-Origin": "*"}}).then(res => {
-      console.log('dx')
-      console.log(res);
+      setToDos(res.data?.Items);
     })
 
   },[])
@@ -17,12 +16,15 @@ const FormTodo = () => {
     setInputValue(e.target.value);
   };
 
-  const buttonSubmit = (e) => {
+  const buttonSubmit = async (e) => {
     e.preventDefault();
     if (inputValue !== "") {
-      setToDos([inputValue, ...toDos]);
+      await axios.post('https://c8tdxqo12a.execute-api.ap-southeast-1.amazonaws.com/dev/users', {"userId": inputValue, "name": inputValue})
       setInputValue("");
     }
+    axios.get('https://c8tdxqo12a.execute-api.ap-southeast-1.amazonaws.com/dev/users',{}, {headers:{"Access-Control-Allow-Origin": "*"}}).then(res => {
+      setToDos(res.data?.Items);
+    })
   };
 
 
@@ -38,7 +40,7 @@ const FormTodo = () => {
       <ol>
         {toDos.map((todo, index) => (
           <li key={index}>
-            {todo}
+            {todo.name}
           </li>
         ))}
       </ol>
