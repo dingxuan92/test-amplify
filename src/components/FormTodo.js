@@ -1,46 +1,49 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 
-export default class FormTodo extends Component {
-  state = {
-    inputValue: "",
-    todos: [],
+const FormTodo = () => {
+  const [inputValue, setInputValue] = useState("");
+  const [toDos, setToDos] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://c8tdxqo12a.execute-api.ap-southeast-1.amazonaws.com/dev/users',{}, {headers:{"Access-Control-Allow-Origin": "*"}}).then(res => {
+      console.log('dx')
+      console.log(res);
+    })
+
+  },[])
+
+  const inputChange = (e) => {
+    setInputValue(e.target.value);
   };
 
-  inputChange = (e) => {
-    this.setState({
-      inputValue: e.target.value,
-    });
-  };
-
-  buttonSubmit = (e) => {
+  const buttonSubmit = (e) => {
     e.preventDefault();
-    if (this.state.inputValue !== "") {
-      this.setState({
-        // todos: [this.state.inputValue],
-        todos: [this.state.inputValue, ...this.state.todos],
-        inputValue: "", // input field clearing on submitting
-      });
+    if (inputValue !== "") {
+      setToDos([inputValue, ...toDos]);
+      setInputValue("");
     }
   };
 
-  render() {
-    return (
-      <form onSubmit={this.buttonSubmit}>
-        <input
-          type="text"
-          value={this.state.inputValue}
-          placeholder="Enter task..."
-          onChange={this.inputChange}
-        />
-        <button onClick={this.buttonSubmit}>Add task</button>
-        <ol>
-          {this.state.todos.map((todo, index) => (
-            <li key={index} onClick={this.listRemove}>
-              {todo}
-            </li>
-          ))}
-        </ol>
-      </form>
-    );
-  }
+
+  return (
+    <form onSubmit={buttonSubmit}>
+      <input
+        type="text"
+        value={inputValue}
+        placeholder="Enter user..."
+        onChange={inputChange}
+      />
+      <button onClick={buttonSubmit}>Add user</button>
+      <ol>
+        {toDos.map((todo, index) => (
+          <li key={index}>
+            {todo}
+          </li>
+        ))}
+      </ol>
+    </form>
+  );
 }
+
+export default FormTodo;
